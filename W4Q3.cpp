@@ -10,13 +10,13 @@ alex carnes 6/6
 using namespace std;
 
 
-void protect();
-char process_C(int);
-void Print(vector<char>,char &);
-void stack(vector <char> & );
-void temp(vector <char>,vector <char>,vector <char>,int,char &,char &,char &);
-void LT_choice(vector<char> &, vector <char> &, vector <char> &,int &);
-void print_U(vector<char>,vector <char>, vector <char>,int);
+void protect();                                                                   // protect data by cin.fail only
+char process_C(int);                                                              // processes cin of strings
+void Print(vector<char>,char &);                                                  // print board, only start
+void stack(vector <char> & );                                                     // stores game  letters into vector
+void verify(vector <char>,vector <char>,vector <char>,int,char &,char &,char &);  // verify tower source and destination
+void LT_choice(vector<char> &, vector <char> &, vector <char> &,int &);           // transfers data between vectors
+void print_U(vector<char>,vector <char>, vector <char>,int);                      // print updated board
 
 
 int main () {
@@ -156,7 +156,7 @@ void stack(vector <char> &T1C_vector) {
 
 
 // to get and verify tower choices
-void temp(vector <char> T1C_vector,vector <char> T2C_vector, vector <char> T3C_vector, int W,char &T01,char &V,char &U){
+void verify(vector <char> T1C_vector,vector <char> T2C_vector, vector <char> T3C_vector, int W,char &T01,char &V,char &U){
 
     int T;       // U is from tower, V is destination tower, for T1 U/V = 1, for T2 U/V = 2
     bool ls01 = true; bool ls02 = true;     // for loop control
@@ -203,9 +203,9 @@ void temp(vector <char> T1C_vector,vector <char> T2C_vector, vector <char> T3C_v
 void LT_choice(vector<char> &T1C_vector, vector <char> &T2C_vector, vector <char> &T3C_vector,int &maxS) {
 
     int W; char T01,V,U,SW;                                 // declare varibales used in this fucntion
-    temp(T1C_vector,T2C_vector,T3C_vector,0,T01,V,U);   //  get starting tower uses prong indicator W
+    verify(T1C_vector,T2C_vector,T3C_vector,0,T01,V,U);   //  get starting tower uses prong indicator W
 
-    temp(T1C_vector,T2C_vector,T3C_vector,1,T01,V,U);   //  get desitnaiton tower uses prong indicator W
+    verify(T1C_vector,T2C_vector,T3C_vector,1,T01,V,U);   //  get desitnaiton tower uses prong indicator W
 // display the transfer of letter
     cout <<T01<< "-->"; if (V == '1') cout <<"T1\n"; else if (V == '2') cout <<"T2\n"; else if (V == '3') cout <<"T3\n";
 
