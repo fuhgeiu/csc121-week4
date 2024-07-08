@@ -3,9 +3,30 @@ program
 alex carnes 6/6
 */
 
+
+/*  notes
+program to simulate gam of tower of hanoi
+current
+to create letters used in game, user enters how many letter to put in up to 25 letters
+asks user to verify the board of not can enter no to reset letter range
+does protect against bad data in all inputs with differnt methods
+prevents getting source from emtpy and sending to destinaiton if alphabeticla order is not preserved
+will ask again if data is not acceptable
+will display the letter being transfered and where it is being transfered to
+display the board after trasnfer is complete with an autoscaled board
+
+autoscale board
+
+    store size of each tower in a array after source gets transfered to dest
+    sort than assign the greatest element as a variable to use in print function
+*/
+
+
+
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -15,14 +36,13 @@ char process_C(int);                                                            
 void Print(vector<char>,char &);                                                  // print board, only start
 void stack(vector <char> & );                                                     // stores game  letters into vector
 void verify(vector <char>,vector <char>,vector <char>,int,char &,char &,char &);  // verify tower source and destination
-void LT_choice(vector<char> &, vector <char> &, vector <char> &,int &);           // transfers data between vectors
-void print_U(vector<char>,vector <char>, vector <char>,int);                      // print updated board
+void LT_choice(vector<char> &, vector <char> &, vector <char> &);           // transfers data between vectors
+void print_U(vector<char>,vector <char>, vector <char>);                      // print updated board
 
 
 int main () {
 
     bool ls1 = 1;
-    int maxS;                   // does not need to be in loop as it is pass by value
 
 //program loop
     while (ls1) {
@@ -33,10 +53,6 @@ int main () {
         vector <char> T1C_vector;                   // for storing tower 1 data when plyaer input range
         vector <char> T2C_vector;                   // for storing tower 2 data when plyaer input range
         vector <char> T3C_vector;                   // for storing tower 3 data when plyaer input range
-
-        vector <string> T1_vector;                  // for storing tower1 data
-        vector <string> T2_vector;                  // for storing tower2 data
-        vector <string> T3_vector;                  // for storing tower3 data
 
         bool ls2 = 1, ls3 =1;                 // declare variables for new game
 
@@ -51,15 +67,14 @@ int main () {
         ls01 = '1';     Print(T1C_vector, ls01);    // change prong and call function, print with letters
 
         if (ls01 == 'n') break;       // to print board with letters and confirm
-        maxS = T1C_vector.size();       // assign board max height
 //repeat game loop for entering in tower moves
         while (ls2) {
 //      func to get and verify moving letter from a tower to another
 //        verify the tower itself is in alphabetical order
 //        confirm by display example | A --> T1 |
-            LT_choice(T1C_vector,T2C_vector,T3C_vector,maxS);
+            LT_choice(T1C_vector,T2C_vector,T3C_vector);
 //      display updated board
-            print_U(T1C_vector,T2C_vector,T3C_vector,maxS);
+//            print_U(T1C_vector,T2C_vector,T3C_vector,maxS);
 
         }
     }
@@ -94,7 +109,7 @@ char process_C(int T) {
         while (L) {    cin >> N;
             if (N == "no") {R = 'n'; break;}
             if (N == "yes") {break;}
-            else cout << "enter a valid input\n"; cin.ignore(); cin.clear(); }
+            else cout << "enter a valid input\n"; }
     }
 
 //  second prong,
@@ -200,14 +215,14 @@ void verify(vector <char> T1C_vector,vector <char> T2C_vector, vector <char> T3C
 
 
 //get letter choice and tower choice, and display choice
-void LT_choice(vector<char> &T1C_vector, vector <char> &T2C_vector, vector <char> &T3C_vector,int &maxS) {
+void LT_choice(vector<char> &T1C_vector, vector <char> &T2C_vector, vector <char> &T3C_vector) {
 
     int W; char T01,V,U,SW;                                 // declare varibales used in this fucntion
     verify(T1C_vector,T2C_vector,T3C_vector,0,T01,V,U);   //  get starting tower uses prong indicator W
 
     verify(T1C_vector,T2C_vector,T3C_vector,1,T01,V,U);   //  get desitnaiton tower uses prong indicator W
 // display the transfer of letter
-    cout <<T01<< "-->"; if (V == '1') cout <<"T1\n"; else if (V == '2') cout <<"T2\n"; else if (V == '3') cout <<"T3\n";
+    cout <<T01<< "-->"; if (V == '1')cout<<"T1\n\n"; else if (V == '2')cout<<"T2\n\n"; else if (V == '3')cout<<"T3\n\n";
 
     if (U == '1') {
         if (V == '2') { T2C_vector.push_back(T1C_vector.back()); T1C_vector.pop_back();}     // transfer T1 to T2
@@ -221,23 +236,40 @@ void LT_choice(vector<char> &T1C_vector, vector <char> &T2C_vector, vector <char
         if (V == '1') { T1C_vector.push_back(T3C_vector.back()); T3C_vector.pop_back();}     // transfer T3 to T1
         if (V == '2') { T2C_vector.push_back(T3C_vector.back()); T3C_vector.pop_back();}     // transfer T3 to T2
     }
+
+    print_U(T1C_vector,T2C_vector,T3C_vector);         // print board
+
 }
 
 
+
 // print updated board with letter moved
-void print_U(vector<char> T1C_vector,vector <char> T2C_vector, vector <char> T3C_vector,int maxS ) {
+void print_U(vector<char> T1C_vector,vector <char> T2C_vector, vector <char> T3C_vector) {
 
-    while (T1C_vector.size() < maxS) T1C_vector.push_back('0');
-    while (T2C_vector.size() < maxS) T2C_vector.push_back('0');
-    while (T3C_vector.size() < maxS) T3C_vector.push_back('0');
+    // to autoscale height of board
+    int maxs [3];
 
-    for (int i = (maxS-1); i >= 0; i--) {
+    maxs [0] = T1C_vector.size();
+    maxs [1] = T2C_vector.size();
+    maxs [2] = T3C_vector.size();
 
-        if (T1C_vector[i] != '0') {cout << "  " << T1C_vector[i] << "  ";}   else cout << "     ";
-        if (T2C_vector[i] != '0') {cout << "  " << T2C_vector[i] << "  ";}   else cout << "     ";
-        if (T3C_vector[i] != '0') {cout << "  " << T3C_vector[i] << "  ";}   else cout << "     ";
+    sort(maxs,maxs + 3);
+    int maxS = maxs[2];
+
+    // to prevent segmentation error
+    while (T1C_vector.size() < maxS) T1C_vector.push_back(' ');
+    while (T2C_vector.size() < maxS) T2C_vector.push_back(' ');
+    while (T3C_vector.size() < maxS) T3C_vector.push_back(' ');
+
+    for (int i = (maxS-1); i >= 0; i--) {                           // to print proper number of lines
+
+        cout << "  " << T1C_vector[i] << "  ";
+        cout << "  " << T2C_vector[i] << "  ";
+        cout << "  " << T3C_vector[i] << "  ";
         cout << "\n";
     }
     cout << " T01  T02  T03 \n";
+
+
 }
 
